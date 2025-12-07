@@ -63,43 +63,39 @@ export class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.generateHighFidelityTextures();
-    this.generateObjectTextures();
+    try {
+      this.generateHighFidelityTextures();
+      this.generateObjectTextures();
+    } catch (e) {
+      console.error("Failed to generate textures:", e);
+    }
   }
 
   private generateHighFidelityTextures() {
     // 1. Sci-Fi Floor Plate (General)
-    // Dark metal with noise and rivets
     const plateCanvas = this.make.graphics({ x: 0, y: 0 }, false);
-    plateCanvas.fillStyle(0x334155); // Slate 700 base
+    plateCanvas.fillStyle(0x334155); 
     plateCanvas.fillRect(0, 0, 64, 64);
-    
-    // Add noise/grit
     for(let i=0; i<50; i++) {
         plateCanvas.fillStyle(0x475569, Math.random() * 0.5);
         plateCanvas.fillRect(Math.random()*64, Math.random()*64, 2, 2);
     }
-    
-    // Bevel edges for depth
-    plateCanvas.lineStyle(2, 0x1e293b); // Dark border
+    plateCanvas.lineStyle(2, 0x1e293b); 
     plateCanvas.strokeRect(0, 0, 64, 64);
-    plateCanvas.lineStyle(1, 0x64748b); // Highlight top/left
+    plateCanvas.lineStyle(1, 0x64748b); 
     plateCanvas.beginPath();
     plateCanvas.moveTo(0, 64); plateCanvas.lineTo(0,0); plateCanvas.lineTo(64,0);
     plateCanvas.strokePath();
-
-    // Rivets
     plateCanvas.fillStyle(0x94a3b8);
     [4, 60].forEach(x => [4, 60].forEach(y => plateCanvas.fillCircle(x, y, 2)));
     plateCanvas.generateTexture('tex_plate', 64, 64);
     plateCanvas.destroy();
 
-    // 2. Hazard Floor (Electrical)
-    // Industrial yellow/black stripes
+    // 2. Hazard Floor
     const hazCanvas = this.make.graphics({ x: 0, y: 0 }, false);
-    hazCanvas.fillStyle(0xfacc15); // Yellow
+    hazCanvas.fillStyle(0xfacc15); 
     hazCanvas.fillRect(0, 0, 64, 64);
-    hazCanvas.fillStyle(0x1a1a1a); // Black stripes
+    hazCanvas.fillStyle(0x1a1a1a); 
     for(let i=-64; i<128; i+=16) {
         hazCanvas.beginPath();
         hazCanvas.moveTo(i, 0);
@@ -109,7 +105,6 @@ export class MainScene extends Phaser.Scene {
         hazCanvas.closePath();
         hazCanvas.fill();
     }
-    // Grime overlay
     hazCanvas.fillStyle(0x000000, 0.1);
     for(let i=0; i<100; i++) {
         hazCanvas.fillCircle(Math.random()*64, Math.random()*64, 1);
@@ -119,64 +114,52 @@ export class MainScene extends Phaser.Scene {
     hazCanvas.generateTexture('tex_hazard', 64, 64);
     hazCanvas.destroy();
 
-    // 3. MedBay Tile (Clean)
-    // Glossy white/blue tiles
+    // 3. MedBay Tile
     const tileCanvas = this.make.graphics({ x: 0, y: 0 }, false);
-    tileCanvas.fillStyle(0xe0f2fe); // Very light blue
+    tileCanvas.fillStyle(0xe0f2fe); 
     tileCanvas.fillRect(0, 0, 64, 64);
-    // Inner square for tile definition
     tileCanvas.fillStyle(0xffffff);
     tileCanvas.fillRect(2, 2, 60, 60);
-    // Reflection
     tileCanvas.fillStyle(0xffffff, 0.4);
     tileCanvas.fillEllipse(15, 15, 20, 10);
-    tileCanvas.lineStyle(1, 0xbae6fd); // Grout
+    tileCanvas.lineStyle(1, 0xbae6fd); 
     tileCanvas.strokeRect(0,0,64,64);
     tileCanvas.generateTexture('tex_tile', 64, 64);
     tileCanvas.destroy();
 
-    // 4. Cargo Grate (Storage/Shields)
-    // Heavy metal mesh
+    // 4. Cargo Grate
     const grateCanvas = this.make.graphics({ x: 0, y: 0 }, false);
-    grateCanvas.fillStyle(0x0f172a); // Dark background (hole)
+    grateCanvas.fillStyle(0x0f172a); 
     grateCanvas.fillRect(0, 0, 64, 64);
-    grateCanvas.lineStyle(2, 0x475569); // Metal bars
-    // Crosshatch
+    grateCanvas.lineStyle(2, 0x475569); 
     for(let i=0; i<=64; i+=8) {
         grateCanvas.lineBetween(i, 0, i, 64);
         grateCanvas.lineBetween(0, i, 64, i);
     }
-    // Border
     grateCanvas.lineStyle(4, 0x334155);
     grateCanvas.strokeRect(0,0,64,64);
     grateCanvas.generateTexture('tex_grate', 64, 64);
     grateCanvas.destroy();
 
     // 5. Admin Carpet
-    // Rich texture
     const carpCanvas = this.make.graphics({ x: 0, y: 0 }, false);
-    carpCanvas.fillStyle(0x1e1b4b); // Deep indigo
+    carpCanvas.fillStyle(0x1e1b4b); 
     carpCanvas.fillRect(0, 0, 64, 64);
-    // Noise for fabric texture
     carpCanvas.fillStyle(0x312e81, 0.3);
     for(let i=0; i<200; i++) {
         carpCanvas.fillRect(Math.random()*64, Math.random()*64, 1, 1);
     }
-    // Pattern
     carpCanvas.lineStyle(1, 0x4338ca, 0.2);
     carpCanvas.strokeRect(4,4,56,56);
     carpCanvas.generateTexture('tex_carpet', 64, 64);
     carpCanvas.destroy();
 
     // 6. Reactor Grid
-    // Glowing hex floor
     const reactCanvas = this.make.graphics({ x: 0, y: 0 }, false);
     reactCanvas.fillStyle(0x020617);
     reactCanvas.fillRect(0,0,64,64);
-    // Hexagon
-    reactCanvas.lineStyle(2, 0x3b82f6); // Blue glow
+    reactCanvas.lineStyle(2, 0x3b82f6); 
     reactCanvas.beginPath();
-    // Approximate hex shape in 64x64
     reactCanvas.moveTo(32, 4);
     reactCanvas.lineTo(56, 16);
     reactCanvas.lineTo(56, 48);
@@ -185,7 +168,6 @@ export class MainScene extends Phaser.Scene {
     reactCanvas.lineTo(8, 16);
     reactCanvas.closePath();
     reactCanvas.strokePath();
-    // Center pulse
     reactCanvas.fillStyle(0x3b82f6, 0.2);
     reactCanvas.fillCircle(32,32, 10);
     reactCanvas.generateTexture('tex_reactor', 64, 64);
@@ -201,14 +183,14 @@ export class MainScene extends Phaser.Scene {
     crewG.generateTexture('crew_body', 60, 50);
     crewG.destroy();
     
-    // Dead Body (Legs + Bone)
+    // Dead Body
     const deadG = this.make.graphics({x:0, y:0}, false);
-    deadG.fillStyle(0xffffff); // Will be tinted
-    deadG.fillRoundedRect(10, 25, 40, 25, 10); // Lower body
-    deadG.fillRoundedRect(0, 35, 15, 15, 4); // Backpack bottom
-    deadG.fillStyle(0xdc2626); // Blood/Meat
+    deadG.fillStyle(0xffffff); 
+    deadG.fillRoundedRect(10, 25, 40, 25, 10); 
+    deadG.fillRoundedRect(0, 35, 15, 15, 4); 
+    deadG.fillStyle(0xdc2626); 
     deadG.fillEllipse(30, 25, 30, 10);
-    deadG.fillStyle(0xffffff); // Bone (PURE WHITE)
+    deadG.fillStyle(0xffffff); 
     deadG.fillRoundedRect(25, 5, 10, 25, 4);
     deadG.fillCircle(25, 5, 6);
     deadG.fillCircle(35, 5, 6);
@@ -251,7 +233,7 @@ export class MainScene extends Phaser.Scene {
     conG.generateTexture('obj_console', 80, 40);
     conG.destroy();
 
-    // Emergency Button Texture
+    // Emergency Button
     const btnG = this.make.graphics({x:0, y:0}, false);
     btnG.fillStyle(0x94a3b8);
     btnG.fillCircle(20, 20, 20);
@@ -262,7 +244,7 @@ export class MainScene extends Phaser.Scene {
     btnG.generateTexture('obj_button', 40, 40);
     btnG.destroy();
 
-    // Keycard Texture
+    // Keycard
     const keyG = this.make.graphics({x:0, y:0}, false);
     keyG.fillStyle(0xf59e0b);
     keyG.fillRoundedRect(0, 0, 24, 36, 4);
@@ -280,211 +262,198 @@ export class MainScene extends Phaser.Scene {
   }
 
   create() {
-    this.physics.world.setBounds(0, 0, MAP_WIDTH, MAP_HEIGHT);
-    this.cameras.main.setBounds(0, 0, MAP_WIDTH, MAP_HEIGHT);
-    
-    // Background Space
-    this.add.tileSprite(MAP_WIDTH/2, MAP_HEIGHT/2, MAP_WIDTH, MAP_HEIGHT, 'tex_plate').setAlpha(0.2).setTint(0x000000).setScrollFactor(0.2);
-
-    // Build Vision Edges from Walls
-    this.buildVisionEdges();
-
-    // Floor Zones
-    ZONES.forEach(zone => {
-        let tex = 'tex_plate';
-        if (zone.texture === 'hazard') tex = 'tex_hazard';
-        if (zone.texture === 'tile') tex = 'tex_tile';
-        if (zone.texture === 'grate') tex = 'tex_grate';
-        if (zone.texture === 'carpet') tex = 'tex_carpet';
-        if (zone.texture === 'admin') tex = 'tex_tile';
-        if (zone.texture === 'reactor') tex = 'tex_reactor';
-
-        // Tiled sprite for the floor
-        const tile = this.add.tileSprite(zone.x + zone.w/2, zone.y + zone.h/2, zone.w, zone.h, tex);
+    try {
+        this.physics.world.setBounds(0, 0, MAP_WIDTH, MAP_HEIGHT);
+        this.cameras.main.setBounds(0, 0, MAP_WIDTH, MAP_HEIGHT);
         
-        // Adjust tints/alpha based on zone for atmosphere
-        if (zone.texture === 'hazard') tile.setAlpha(0.9);
-        else if (zone.texture === 'plate') tile.setTint(0xcccccc);
-        else if (zone.texture === 'carpet') tile.setAlpha(1.0);
-        else tile.setAlpha(1);
+        // Background
+        this.add.tileSprite(MAP_WIDTH/2, MAP_HEIGHT/2, MAP_WIDTH, MAP_HEIGHT, 'tex_plate').setAlpha(0.2).setTint(0x000000).setScrollFactor(0.2);
 
-        // Add a floor border
-        const border = this.add.rectangle(zone.x + zone.w/2, zone.y + zone.h/2, zone.w, zone.h);
-        border.setStrokeStyle(4, 0x000000, 0.5);
-    });
+        this.buildVisionEdges();
 
-    this.renderDecorations();
-    
-    // Render Vents
-    VENTS.forEach(v => {
-        this.add.sprite(v.x, v.y, 'obj_vent').setDepth(2).setAlpha(0.9);
-    });
+        // Floor Zones
+        ZONES.forEach(zone => {
+            let tex = 'tex_plate';
+            if (zone.texture === 'hazard') tex = 'tex_hazard';
+            if (zone.texture === 'tile') tex = 'tex_tile';
+            if (zone.texture === 'grate') tex = 'tex_grate';
+            if (zone.texture === 'carpet') tex = 'tex_carpet';
+            if (zone.texture === 'admin') tex = 'tex_tile';
+            if (zone.texture === 'reactor') tex = 'tex_reactor';
 
-    // Walls
-    const wallGraphics = this.add.graphics();
-    // Shadows
-    wallGraphics.fillStyle(0x000000, 0.6);
-    WALLS.forEach(wall => {
-        wallGraphics.fillRect(wall.x + 10, wall.y + 10, wall.w, wall.h);
-    });
-    // Wall Structure
-    WALLS.forEach(wall => {
-        // Main Wall body
-        wallGraphics.fillStyle(0x475569); 
-        wallGraphics.fillRect(wall.x, wall.y, wall.w, wall.h);
+            const tile = this.add.tileSprite(zone.x + zone.w/2, zone.y + zone.h/2, zone.w, zone.h, tex);
+            
+            if (zone.texture === 'hazard') tile.setAlpha(0.9);
+            else if (zone.texture === 'plate') tile.setTint(0xcccccc);
+            else if (zone.texture === 'carpet') tile.setAlpha(1.0);
+            else tile.setAlpha(1);
+
+            const border = this.add.rectangle(zone.x + zone.w/2, zone.y + zone.h/2, zone.w, zone.h);
+            border.setStrokeStyle(4, 0x000000, 0.5);
+        });
+
+        this.renderDecorations();
         
-        // Top cap (lighter)
-        wallGraphics.fillStyle(0x64748b);
-        wallGraphics.fillRect(wall.x, wall.y, wall.w, 10);
+        // Vents
+        VENTS.forEach(v => {
+            this.add.sprite(v.x, v.y, 'obj_vent').setDepth(2).setAlpha(0.9);
+        });
 
-        // Bottom base (darker/3D)
-        wallGraphics.fillStyle(0x334155); 
-        wallGraphics.fillRect(wall.x, wall.y + wall.h - 15, wall.w, 15);
-        
-        // Outline
-        wallGraphics.lineStyle(2, 0x0f172a);
-        wallGraphics.strokeRect(wall.x, wall.y, wall.w, wall.h);
-    });
+        // Walls
+        const wallGraphics = this.add.graphics();
+        wallGraphics.fillStyle(0x000000, 0.6);
+        WALLS.forEach(wall => {
+            wallGraphics.fillRect(wall.x + 10, wall.y + 10, wall.w, wall.h);
+        });
+        WALLS.forEach(wall => {
+            wallGraphics.fillStyle(0x475569); 
+            wallGraphics.fillRect(wall.x, wall.y, wall.w, wall.h);
+            wallGraphics.fillStyle(0x64748b);
+            wallGraphics.fillRect(wall.x, wall.y, wall.w, 10);
+            wallGraphics.fillStyle(0x334155); 
+            wallGraphics.fillRect(wall.x, wall.y + wall.h - 15, wall.w, 15);
+            wallGraphics.lineStyle(2, 0x0f172a);
+            wallGraphics.strokeRect(wall.x, wall.y, wall.w, wall.h);
+        });
 
-    // Room Labels
-    ROOMS.forEach(room => {
-        this.add.text(room.x, room.y, room.name, {
-            fontSize: '32px',
-            fontFamily: 'Impact, sans-serif',
-            color: '#e2e8f0',
-        })
-        .setOrigin(0.5)
-        .setAlpha(0.4)
-        .setBlendMode(Phaser.BlendModes.ADD);
-    });
+        // Room Labels
+        ROOMS.forEach(room => {
+            this.add.text(room.x, room.y, room.name, {
+                fontSize: '32px',
+                fontFamily: 'Impact, sans-serif',
+                color: '#e2e8f0',
+            })
+            .setOrigin(0.5)
+            .setAlpha(0.4)
+            .setBlendMode(Phaser.BlendModes.ADD);
+        });
 
-    // Security Gates
-    GATES.forEach(gate => {
-        const g = this.add.rectangle(gate.x + gate.w/2, gate.y + gate.h/2, gate.w, gate.h, 0xff0000, 0.4);
-        g.setStrokeStyle(2, 0xff0000);
+        // Gates
+        GATES.forEach(gate => {
+            const g = this.add.rectangle(gate.x + gate.w/2, gate.y + gate.h/2, gate.w, gate.h, 0xff0000, 0.4);
+            g.setStrokeStyle(2, 0xff0000);
+            this.tweens.add({
+                targets: g,
+                alpha: 0.6,
+                duration: 500,
+                yoyo: true,
+                repeat: -1
+            });
+            this.gates.push(g);
+        });
+
+        // Doors
+        DOORS.forEach(door => {
+            const d = this.add.rectangle(door.x + door.w/2, door.y + door.h/2, door.w, door.h, 0x576574);
+            d.setStrokeStyle(2, 0x2d3436);
+            const stripes = this.add.graphics();
+            stripes.lineStyle(2, 0x2d3436, 0.5);
+            if (door.w > door.h) {
+                for(let i=0; i<door.w; i+=10) stripes.lineBetween(door.x + i, door.y, door.x + i, door.y + door.h);
+            } else {
+                for(let i=0; i<door.h; i+=10) stripes.lineBetween(door.x, door.y + i, door.x + door.w, door.y + i);
+            }
+            d.setVisible(false);
+            d.setDepth(15);
+            this.doorSprites.set(door.roomId, d);
+        });
+
+        // Emergency Button
+        const btn = this.add.sprite(EMERGENCY_BUTTON.x, EMERGENCY_BUTTON.y, 'obj_button');
+        btn.setDepth(10);
         this.tweens.add({
-            targets: g,
-            alpha: 0.6,
+            targets: btn,
+            scale: 1.1,
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        });
+
+        // Keycard
+        this.keycardSprite = this.add.sprite(KEYCARD_SPAWN.x, KEYCARD_SPAWN.y, 'obj_keycard');
+        this.keycardSprite.setDepth(15);
+        this.tweens.add({
+            targets: this.keycardSprite,
+            y: KEYCARD_SPAWN.y - 10,
+            duration: 1500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        // Layers
+        this.ghostViewLayer = this.add.rectangle(MAP_WIDTH/2, MAP_HEIGHT/2, MAP_WIDTH, MAP_HEIGHT, 0x64748b, 0.2);
+        this.ghostViewLayer.setDepth(100).setVisible(false).setBlendMode(Phaser.BlendModes.MULTIPLY);
+
+        this.darknessLayer = this.add.graphics();
+        this.darknessLayer.setDepth(90);
+        this.darknessLayer.setVisible(false);
+        
+        this.visionMaskShape = this.make.graphics({});
+        this.visionMask = this.visionMaskShape.createGeometryMask();
+        this.visionMask.setInvertAlpha(true);
+        this.darknessLayer.setMask(this.visionMask);
+
+        this.redAlarmOverlay = this.add.rectangle(MAP_WIDTH/2, MAP_HEIGHT/2, MAP_WIDTH, MAP_HEIGHT, 0xff0000, 0.2);
+        this.redAlarmOverlay.setDepth(95).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
+        this.tweens.add({
+            targets: this.redAlarmOverlay,
+            alpha: 0.05,
             duration: 500,
             yoyo: true,
             repeat: -1
         });
-        this.gates.push(g);
-    });
 
-    // Sabotage Doors (Initially Hidden)
-    DOORS.forEach(door => {
-        const d = this.add.rectangle(door.x + door.w/2, door.y + door.h/2, door.w, door.h, 0x576574);
-        d.setStrokeStyle(2, 0x2d3436);
-        // Visual detail for door slats
-        const stripes = this.add.graphics();
-        stripes.lineStyle(2, 0x2d3436, 0.5);
-        if (door.w > door.h) { // Horizontal
-            for(let i=0; i<door.w; i+=10) stripes.lineBetween(door.x + i, door.y, door.x + i, door.y + door.h);
-        } else { // Vertical
-             for(let i=0; i<door.h; i+=10) stripes.lineBetween(door.x, door.y + i, door.x + door.w, door.y + i);
+        this.killEmitter = this.add.particles(0, 0, 'blood', {
+            lifespan: 1000,
+            speed: { min: 50, max: 200 },
+            scale: { start: 1, end: 0 },
+            quantity: 20,
+            emitting: false
+        });
+
+        if (this.input.keyboard) {
+            this.cursors = this.input.keyboard.createCursorKeys();
+            this.wasd = this.input.keyboard.addKeys({
+                up: Phaser.Input.Keyboard.KeyCodes.W,
+                down: Phaser.Input.Keyboard.KeyCodes.S,
+                left: Phaser.Input.Keyboard.KeyCodes.A,
+                right: Phaser.Input.Keyboard.KeyCodes.D
+            }) as any;
+            this.keyV = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V);
         }
-        d.setVisible(false);
-        d.setDepth(15);
-        this.doorSprites.set(door.roomId, d);
-    });
 
-    // Emergency Button
-    const btn = this.add.sprite(EMERGENCY_BUTTON.x, EMERGENCY_BUTTON.y, 'obj_button');
-    btn.setDepth(10);
-    this.tweens.add({
-        targets: btn,
-        scale: 1.1,
-        duration: 1000,
-        yoyo: true,
-        repeat: -1
-    });
+        net.on('state:update', (state: ServerState) => this.handleStateUpdate(state));
+        net.on('player:killed', (id: string) => {
+            soundManager.playKill();
+            const player = this.players.get(id);
+            if (player) this.killEmitter.explode(30, player.x, player.y);
+        });
+        net.on('player:vented', () => {
+            soundManager.playVent();
+        });
+        net.on('sabotage:update', (sabotage: SabotageSystem) => {
+            if (sabotage.system === 'reactor') soundManager.playEmergency();
+        });
+        net.on('game:over', () => this.scene.pause());
 
-    // Keycard
-    this.keycardSprite = this.add.sprite(KEYCARD_SPAWN.x, KEYCARD_SPAWN.y, 'obj_keycard');
-    this.keycardSprite.setDepth(15);
-    this.tweens.add({
-        targets: this.keycardSprite,
-        y: KEYCARD_SPAWN.y - 10,
-        duration: 1500,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut'
-    });
-
-    // Ghost View Tint Layer (Invisible by default)
-    this.ghostViewLayer = this.add.rectangle(MAP_WIDTH/2, MAP_HEIGHT/2, MAP_WIDTH, MAP_HEIGHT, 0x64748b, 0.2);
-    this.ghostViewLayer.setDepth(100).setVisible(false).setBlendMode(Phaser.BlendModes.MULTIPLY);
-
-    // Lights Sabotage Layer (Darkness)
-    this.darknessLayer = this.add.graphics();
-    this.darknessLayer.setDepth(90);
-    this.darknessLayer.setVisible(false);
-    
-    // Mask for Darkness
-    this.visionMaskShape = this.make.graphics({});
-    this.visionMask = this.visionMaskShape.createGeometryMask();
-    this.visionMask.setInvertAlpha(true); // The mask shape cuts a hole in the darkness
-    this.darknessLayer.setMask(this.visionMask);
-
-    // Red Alarm Overlay
-    this.redAlarmOverlay = this.add.rectangle(MAP_WIDTH/2, MAP_HEIGHT/2, MAP_WIDTH, MAP_HEIGHT, 0xff0000, 0.2);
-    this.redAlarmOverlay.setDepth(95).setVisible(false).setBlendMode(Phaser.BlendModes.ADD);
-    this.tweens.add({
-        targets: this.redAlarmOverlay,
-        alpha: 0.05,
-        duration: 500,
-        yoyo: true,
-        repeat: -1
-    });
-
-    this.killEmitter = this.add.particles(0, 0, 'blood', {
-        lifespan: 1000,
-        speed: { min: 50, max: 200 },
-        scale: { start: 1, end: 0 },
-        quantity: 20,
-        emitting: false
-    });
-
-    if (this.input.keyboard) {
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.wasd = this.input.keyboard.addKeys({
-            up: Phaser.Input.Keyboard.KeyCodes.W,
-            down: Phaser.Input.Keyboard.KeyCodes.S,
-            left: Phaser.Input.Keyboard.KeyCodes.A,
-            right: Phaser.Input.Keyboard.KeyCodes.D
-        }) as any;
-        this.keyV = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.V);
+    } catch (error) {
+        console.error("Error creating scene:", error);
     }
-
-    net.on('state:update', (state: ServerState) => this.handleStateUpdate(state));
-    net.on('player:killed', (id: string) => {
-        soundManager.playKill();
-        const player = this.players.get(id);
-        if (player) this.killEmitter.explode(30, player.x, player.y);
-    });
-    net.on('player:vented', () => {
-        soundManager.playVent();
-    });
-    net.on('sabotage:update', (sabotage: SabotageSystem) => {
-        if (sabotage.system === 'reactor') soundManager.playEmergency();
-    });
-    net.on('game:over', () => this.scene.pause());
   }
 
   private buildVisionEdges() {
       this.wallEdges = [];
-      // Map Borders
       this.wallEdges.push({x1: 0, y1: 0, x2: MAP_WIDTH, y2: 0});
       this.wallEdges.push({x1: MAP_WIDTH, y1: 0, x2: MAP_WIDTH, y2: MAP_HEIGHT});
       this.wallEdges.push({x1: MAP_WIDTH, y1: MAP_HEIGHT, x2: 0, y2: MAP_HEIGHT});
       this.wallEdges.push({x1: 0, y1: MAP_HEIGHT, x2: 0, y2: 0});
 
       WALLS.forEach(w => {
-          this.wallEdges.push({x1: w.x, y1: w.y, x2: w.x + w.w, y2: w.y}); // Top
-          this.wallEdges.push({x1: w.x + w.w, y1: w.y, x2: w.x + w.w, y2: w.y + w.h}); // Right
-          this.wallEdges.push({x1: w.x + w.w, y1: w.y + w.h, x2: w.x, y2: w.y + w.h}); // Bottom
-          this.wallEdges.push({x1: w.x, y1: w.y + w.h, x2: w.x, y2: w.y}); // Left
+          this.wallEdges.push({x1: w.x, y1: w.y, x2: w.x + w.w, y2: w.y}); 
+          this.wallEdges.push({x1: w.x + w.w, y1: w.y, x2: w.x + w.w, y2: w.y + w.h}); 
+          this.wallEdges.push({x1: w.x + w.w, y1: w.y + w.h, x2: w.x, y2: w.y + w.h}); 
+          this.wallEdges.push({x1: w.x, y1: w.y + w.h, x2: w.x, y2: w.y}); 
       });
   }
 
@@ -508,7 +477,6 @@ export class MainScene extends Phaser.Scene {
     if (!this.wasd || !this.cursors) return;
     if (this.isMeeting) return;
 
-    // Movement
     const velocity = { x: 0, y: 0 };
     if (this.cursors.left.isDown || this.wasd.left.isDown) velocity.x = -1;
     else if (this.cursors.right.isDown || this.wasd.right.isDown) velocity.x = 1;
@@ -520,7 +488,6 @@ export class MainScene extends Phaser.Scene {
         velocity.x /= length;
         velocity.y /= length;
         
-        // Footstep sound
         if (this.time.now - this.lastStepTime > 300) {
             soundManager.playStep();
             this.lastStepTime = this.time.now;
@@ -532,7 +499,6 @@ export class MainScene extends Phaser.Scene {
         this.lastInput = velocity;
     }
     
-    // Vent Action
     if (Phaser.Input.Keyboard.JustDown(this.keyV)) {
         net.emit('action:vent');
     }
@@ -541,10 +507,8 @@ export class MainScene extends Phaser.Scene {
   private handleStateUpdate(state: ServerState) {
     this.isMeeting = state.gameState === GameState.MEETING;
 
-    // 1. Update Global Elements
     this.keycardSprite.setVisible(!state.keycardTaken);
 
-    // 2. Sabotage Visuals
     this.doorSprites.forEach(d => d.setVisible(false));
     Object.keys(state.sabotage.doors).forEach(roomId => {
         const d = this.doorSprites.get(roomId);
@@ -554,7 +518,6 @@ export class MainScene extends Phaser.Scene {
     this.lightsSabotaged = state.sabotage.system === 'lights';
     this.redAlarmOverlay.setVisible(state.sabotage.system === 'reactor');
 
-    // 3. Local Player State
     const me = state.players[this.localPlayerId];
     if (me) {
         const canPass = me.role === Role.IMPOSTOR || me.hasKey;
@@ -570,35 +533,31 @@ export class MainScene extends Phaser.Scene {
 
         this.ghostViewLayer.setVisible(me.isDead);
 
-        // --- DYNAMIC VISION SYSTEM ---
         if (this.lightsSabotaged && !me.isDead && me.role !== Role.IMPOSTOR) {
              this.darknessLayer.setVisible(true);
              this.darknessLayer.clear();
-             this.darknessLayer.fillStyle(0x000000, 0.98); // Almost black
+             this.darknessLayer.fillStyle(0x000000, 0.98); 
              this.darknessLayer.fillRect(0, 0, MAP_WIDTH, MAP_HEIGHT);
              
-             // Calculate Visibility Polygon
-             const visionRadius = 180; // Reduced vision when lights are out
+             const visionRadius = 180; 
              const polygon = this.calculateVisibilityPolygon(me.x, me.y, visionRadius);
              
              this.visionMaskShape.clear();
              this.visionMaskShape.fillStyle(0xffffff);
              this.visionMaskShape.fillPoints(polygon);
-             this.visionMaskShape.fillCircle(me.x, me.y, 30); // Ensure player always visible
+             this.visionMaskShape.fillCircle(me.x, me.y, 30); 
              
         } else {
              this.darknessLayer.setVisible(false);
-             this.visionMaskShape.clear(); // Clear mask logic
+             this.visionMaskShape.clear(); 
         }
     }
 
-    // 3. Render Dead Bodies
     if (state.bodies.length === 0 && this.deadBodies.size > 0) {
         this.deadBodies.forEach(b => b.destroy());
         this.deadBodies.clear();
     }
     state.bodies.forEach(bodyData => {
-        // Line of Sight check for Bodies
         let visible = true;
         if (this.lightsSabotaged && me && !me.isDead && me.role !== Role.IMPOSTOR) {
              if (!this.checkLineOfSight(me.x, me.y, bodyData.x, bodyData.y)) {
@@ -620,7 +579,6 @@ export class MainScene extends Phaser.Scene {
         }
     });
 
-    // 4. Update Players
     this.players.forEach((sprite, id) => {
         if (!state.players[id]) {
             sprite.destroy();
@@ -651,7 +609,6 @@ export class MainScene extends Phaser.Scene {
         const isMoving = Math.abs(pData.velocity.x) > 0 || Math.abs(pData.velocity.y) > 0;
         
         let visible = true;
-        // GHOST LOGIC
         if (pData.isDead) {
             const amIDead = me?.isDead || false;
             if (!pData.isLocal && !amIDead) visible = false;
@@ -664,7 +621,6 @@ export class MainScene extends Phaser.Scene {
             body.setTint(pData.color);
         }
 
-        // LINE OF SIGHT LOGIC (Hiding entities behind walls)
         if (visible && this.lightsSabotaged && !pData.isLocal && me && !me.isDead && me.role !== Role.IMPOSTOR) {
              if (!this.checkLineOfSight(me.x, me.y, pData.x, pData.y)) {
                  visible = false;
@@ -685,14 +641,11 @@ export class MainScene extends Phaser.Scene {
     this.renderTasks(state.tasks);
   }
 
-  // --- Raycasting / Vision Logic ---
   private calculateVisibilityPolygon(originX: number, originY: number, radius: number): Phaser.Geom.Point[] {
       const points: Phaser.Geom.Point[] = [];
       const angles: number[] = [];
 
-      // 1. Collect angles to all wall endpoints within range
       this.wallEdges.forEach(edge => {
-           // Simple optimization: Skip edges far away
            const dist1 = Phaser.Math.Distance.Between(originX, originY, edge.x1, edge.y1);
            const dist2 = Phaser.Math.Distance.Between(originX, originY, edge.x2, edge.y2);
            
@@ -704,10 +657,8 @@ export class MainScene extends Phaser.Scene {
            }
       });
 
-      // Sort angles
       angles.sort((a, b) => a - b);
 
-      // 2. Cast rays
       angles.forEach(angle => {
            const dx = Math.cos(angle);
            const dy = Math.sin(angle);
@@ -716,7 +667,6 @@ export class MainScene extends Phaser.Scene {
            let closestX = originX + dx * radius;
            let closestY = originY + dy * radius;
 
-           // Intersect with all walls
            this.wallEdges.forEach(edge => {
                const intersect = Phaser.Geom.Intersects.LineToLine(
                    new Phaser.Geom.Line(originX, originY, originX + dx * radius, originY + dy * radius),
@@ -724,7 +674,6 @@ export class MainScene extends Phaser.Scene {
                );
                
                if (intersect) {
-                   // Calculate intersection point (Phaser Intersects doesn't return point, just bool, need custom)
                    const pt = this.getLineIntersection(originX, originY, originX + dx*radius, originY + dy*radius, edge.x1, edge.y1, edge.x2, edge.y2);
                    if (pt) {
                        const dist = Phaser.Math.Distance.Between(originX, originY, pt.x, pt.y);
@@ -744,7 +693,6 @@ export class MainScene extends Phaser.Scene {
 
   private checkLineOfSight(x1: number, y1: number, x2: number, y2: number): boolean {
       const line = new Phaser.Geom.Line(x1, y1, x2, y2);
-      // Check collision with any wall
       for (const wall of WALLS) {
            const rect = new Phaser.Geom.Rectangle(wall.x, wall.y, wall.w, wall.h);
            if (Phaser.Geom.Intersects.LineToRectangle(line, rect)) {

@@ -7,7 +7,8 @@
     <!-- Tailwind is now handled via PostCSS/Vite in a real build, but keeping CDN for simplicity if local -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      body {
+      html, body, #root {
+        height: 100%;
         margin: 0;
         padding: 0;
         overflow: hidden;
@@ -17,6 +18,9 @@
       #game-container {
         width: 100vw;
         height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
       }
     </style>
 <script type="importmap">
