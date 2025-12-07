@@ -1,0 +1,5 @@
+{
+  "name": "Sus-Space",
+  "description": "A 2D top-down multiplayer social deduction game using React and Phaser 3. Features authoritative server simulation, real-time movement, tasks, and impostor kill mechanics.",
+  "requestFramePermissions": []
+}
