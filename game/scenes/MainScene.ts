@@ -24,13 +24,15 @@ export class MainScene extends Phaser.Scene {
   };
   private keyV!: Phaser.Input.Keyboard.Key;
   
-  public physics!: Phaser.Physics.Arcade.ArcadePhysics;
-  public add!: Phaser.GameObjects.GameObjectFactory;
-  public cameras!: Phaser.Cameras.Scene2D.CameraManager;
-  public input!: Phaser.Input.InputPlugin;
-  public make!: Phaser.GameObjects.GameObjectCreator;
-  public scene!: Phaser.Scenes.ScenePlugin;
-  public tweens!: Phaser.Tweens.TweenManager;
+  // Use 'declare' to avoid overwriting base properties
+  declare public physics: Phaser.Physics.Arcade.ArcadePhysics;
+  declare public add: Phaser.GameObjects.GameObjectFactory;
+  declare public cameras: Phaser.Cameras.Scene2D.CameraManager;
+  declare public input: Phaser.Input.InputPlugin;
+  declare public make: Phaser.GameObjects.GameObjectCreator;
+  declare public scene: Phaser.Scenes.ScenePlugin;
+  declare public tweens: Phaser.Tweens.TweenManager;
+  declare public time: Phaser.Time.Clock;
 
   private localPlayerId: string = 'local-player';
   private tasks: Phaser.GameObjects.Arc[] = [];
